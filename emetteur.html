@@ -1,0 +1,29 @@
+<html>
+  <body>
+    <button id="start">Démarrer la diffusion</button>
+<p id="info"></p>
+
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script>
+  // Choisissez un identifiant long et unique (il sert aussi de "mot de passe")
+  const RADIO_ID = "ma-radio-k3j9x-2026";
+
+  document.getElementById("start").onclick = async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+    });
+
+    const peer = new Peer(RADIO_ID);
+
+    // Quand un auditeur se connecte, on l'appelle en lui envoyant le flux
+    peer.on("connection", conn => {
+      conn.on("open", () => peer.call(conn.peer, stream));
+    });
+
+    peer.on("open", () => {
+      document.getElementById("info").textContent = "En direct !";
+    });
+  };
+</script>
+  </body>
+</html>
