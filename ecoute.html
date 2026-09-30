@@ -1,0 +1,27 @@
+<html>
+  <body>
+    <button id="play">Écouter</button>
+<audio id="audio" controls></audio>
+
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script>
+  const RADIO_ID = "ma-radio-k3j9x-2026";
+  const audio = document.getElementById("audio");
+
+  document.getElementById("play").onclick = () => {
+    const peer = new Peer();
+
+    peer.on("open", () => peer.connect(RADIO_ID));
+
+    peer.on("call", call => {
+      call.answer(); // on répond sans envoyer de flux
+      call.on("stream", remoteStream => {
+        audio.srcObject = remoteStream;
+        audio.play();
+      });
+    });
+  };
+</script>
+  </body>
+</html>
+
